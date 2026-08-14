@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, ChevronRight, Bell, Zap, Sliders, Shield } from 'lucide-react';
+import { Search, ChevronRight, Zap } from 'lucide-react';
 
 export default function TopHeader({ activeTab, onNavigateTab }) {
   const getTabLabel = () => {
@@ -16,32 +16,29 @@ export default function TopHeader({ activeTab, onNavigateTab }) {
   };
 
   return (
-    <header className="h-16 bg-slate-950/80 backdrop-blur-md border-b border-white/10 px-8 flex items-center justify-between sticky top-0 z-20 font-sans">
-      
-      {/* Breadcrumbs Navigation */}
-      <div className="flex items-center gap-2 text-xs font-mono">
-        <span className="text-slate-400">Dashboard</span>
-        <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+    <header className="top-header font-sans">
+      {/* Breadcrumbs */}
+      <div className="breadcrumbs font-mono">
+        <span>Dashboard</span>
+        <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
         <span className="font-semibold text-indigo-400">{getTabLabel()}</span>
       </div>
 
-      {/* Center Search Bar */}
-      <div className="hidden md:flex items-center relative w-80">
-        <Search className="w-3.5 h-3.5 absolute left-3 text-slate-500" />
+      {/* Search Input */}
+      <div className="search-box hidden md:block">
+        <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-500" />
         <input
           type="text"
-          placeholder="Search TXN ID, merchant, UPI, rules... (⌘K)"
-          className="w-full bg-slate-900 border border-white/10 rounded-lg pl-9 pr-8 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-mono"
+          placeholder="Search TXN ID, merchant, UPI... (⌘K)"
+          className="search-input font-mono"
         />
-        <span className="absolute right-2.5 text-[10px] text-slate-500 font-mono bg-white/5 px-1.5 py-0.5 rounded">⌘K</span>
       </div>
 
-      {/* Right Controls & Profile */}
-      <div className="flex items-center gap-4">
-        {/* Sandbox Quick Button */}
+      {/* Sandbox Button & Profile */}
+      <div className="flex items-center gap-3">
         <button 
           onClick={() => onNavigateTab('sandbox')}
-          className="px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-mono font-semibold flex items-center gap-1.5 hover:bg-amber-500/20 transition-all"
+          className="btn bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-mono font-semibold"
         >
           <Zap className="w-3.5 h-3.5" />
           <span>TEST MODE</span>

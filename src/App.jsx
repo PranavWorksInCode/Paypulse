@@ -91,8 +91,8 @@ export default function App() {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-slate-100 font-sans">
-      {/* Stripe / Razorpay Style Left Sidebar */}
+    <div className="app-layout font-sans">
+      {/* Stripe / Razorpay Style Sidebar */}
       <Sidebar 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -100,14 +100,14 @@ export default function App() {
         setIsSimulating={setIsSimulating}
       />
 
-      {/* Main Content Workspace */}
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* Main Workspace Area */}
+      <div className="main-wrapper">
         <TopHeader 
           activeTab={activeTab}
           onNavigateTab={setActiveTab}
         />
 
-        <main className="p-8 flex-1 overflow-y-auto max-w-7xl w-full mx-auto">
+        <main className="workspace-container">
           {activeTab === 'overview' && (
             <Overview 
               transactions={transactions}

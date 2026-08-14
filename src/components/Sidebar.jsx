@@ -10,9 +10,7 @@ import {
   BookOpen, 
   Pause,
   Play,
-  Zap,
-  CheckCircle2,
-  ChevronRight
+  CheckCircle2
 } from 'lucide-react';
 
 export default function Sidebar({ 
@@ -22,50 +20,46 @@ export default function Sidebar({
   setIsSimulating 
 }) {
   const navItems = [
-    { id: 'overview', label: 'Overview', icon: LayoutDashboard, badge: null },
-    { id: 'radar', label: 'Live Stream Radar', icon: Activity, badge: 'LIVE' },
-    { id: 'copilot', label: 'AI Copilot', icon: Bot, badge: 'AI' },
-    { id: 'sandbox', label: 'UPI Sandbox', icon: CreditCard, badge: 'TEST' },
-    { id: 'rules', label: 'Risk Rule Engine', icon: SlidersHorizontal, badge: null },
-    { id: 'analytics', label: 'Geo & Merchants', icon: MapPin, badge: null },
-    { id: 'architecture', label: 'System Design', icon: BookOpen, badge: 'SDE' }
+    { id: 'overview', label: 'Overview', icon: LayoutDashboard, tag: null },
+    { id: 'radar', label: 'Live Stream Radar', icon: Activity, tag: 'LIVE', tagClass: 'nav-tag-live' },
+    { id: 'copilot', label: 'AI Copilot', icon: Bot, tag: 'AI', tagClass: 'nav-tag-ai' },
+    { id: 'sandbox', label: 'UPI Sandbox', icon: CreditCard, tag: 'TEST', tagClass: 'nav-tag-test' },
+    { id: 'rules', label: 'Risk Rule Engine', icon: SlidersHorizontal, tag: null },
+    { id: 'analytics', label: 'Geo & Merchants', icon: MapPin, tag: null },
+    { id: 'architecture', label: 'System Design', icon: BookOpen, tag: 'SDE', tagClass: 'nav-tag-sde' }
   ];
 
   return (
-    <aside className="w-64 bg-slate-950 border-r border-white/10 flex flex-col justify-between shrink-0 h-screen sticky top-0 font-sans z-30">
+    <aside className="sidebar font-sans">
       <div>
-        {/* Stripe/Razorpay Style Brand Header */}
-        <div className="p-5 border-b border-white/10 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/20">
-              <ShieldAlert className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-base font-extrabold text-white tracking-tight flex items-center gap-1.5">
-                <span>PayPulse</span>
-                <span className="text-indigo-400 font-mono text-xs">AI</span>
-              </h1>
-              <span className="text-[10px] text-slate-400 font-mono">Enterprise Fraud Engine</span>
-            </div>
+        {/* Brand Header */}
+        <div className="sidebar-header">
+          <div className="p-2 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400">
+            <ShieldAlert className="w-5 h-5 text-indigo-400" />
+          </div>
+          <div>
+            <h1 className="text-base font-extrabold text-white tracking-tight flex items-center gap-1.5">
+              <span>PayPulse</span>
+              <span className="text-indigo-400 font-mono text-xs">AI</span>
+            </h1>
+            <p className="text-[10px] text-slate-400 font-mono">Enterprise Fraud Engine</p>
           </div>
         </div>
 
-        {/* Workspace Switcher Pill */}
-        <div className="px-4 py-3 border-b border-white/5">
-          <div className="p-2 rounded-lg bg-slate-900 border border-white/5 flex items-center justify-between text-xs text-slate-300 font-mono">
+        {/* Workspace Pill */}
+        <div className="sidebar-workspace">
+          <div className="workspace-badge font-mono">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-              <span className="font-semibold text-slate-200">Razorpay Production</span>
+              <span className="font-semibold text-slate-200">Razorpay Prod</span>
             </div>
             <span className="text-[10px] text-slate-400">v2.4</span>
           </div>
         </div>
 
-        {/* Sidebar Navigation */}
-        <nav className="p-3 space-y-1">
-          <div className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider font-mono">
-            Navigation Menu
-          </div>
+        {/* Navigation Items */}
+        <nav className="sidebar-nav">
+          <div className="nav-heading">Navigation Menu</div>
 
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -74,28 +68,16 @@ export default function Sidebar({
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
-                  isActive
-                    ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/30'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
-                }`}
+                className={`nav-btn ${isActive ? 'active' : ''}`}
               >
-                <div className="flex items-center gap-2.5">
+                <div className="nav-btn-content">
                   <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                   <span>{item.label}</span>
                 </div>
 
-                {item.badge && (
-                  <span className={`text-[9px] font-bold font-mono px-1.5 py-0.5 rounded ${
-                    isActive 
-                      ? 'bg-white/20 text-white' 
-                      : item.badge === 'LIVE' 
-                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                      : item.badge === 'AI'
-                      ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
-                      : 'bg-purple-500/10 text-purple-300 border border-purple-500/20'
-                  }`}>
-                    {item.badge}
+                {item.tag && (
+                  <span className={`nav-tag ${item.tagClass || ''}`}>
+                    {item.tag}
                   </span>
                 )}
               </button>
@@ -104,9 +86,9 @@ export default function Sidebar({
         </nav>
       </div>
 
-      {/* Sidebar Footer Telemetry */}
-      <div className="p-4 border-t border-white/10 space-y-3 bg-slate-950/60">
-        <div className="p-2.5 rounded-lg bg-slate-900/90 border border-white/5 text-xs font-mono space-y-1.5">
+      {/* Sidebar Footer Telemetry & Stream Switch */}
+      <div className="sidebar-footer font-mono">
+        <div className="p-2.5 rounded-lg bg-slate-900 border border-white/5 text-xs space-y-1.5">
           <div className="flex justify-between items-center text-slate-400">
             <span>System Status:</span>
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
@@ -123,13 +105,12 @@ export default function Sidebar({
           </div>
         </div>
 
-        {/* Live Simulator Toggle Switch */}
         <button
           onClick={() => setIsSimulating(!isSimulating)}
-          className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg font-mono text-xs font-semibold transition-all border ${
+          className={`btn w-full justify-center text-xs font-mono ${
             isSimulating
-              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
-              : 'bg-amber-500/10 text-amber-400 border-amber-500/30 hover:bg-amber-500/20'
+              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+              : 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
           }`}
         >
           {isSimulating ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
