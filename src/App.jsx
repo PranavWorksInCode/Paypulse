@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
+import Sidebar from './components/Sidebar';
+import TopHeader from './components/TopHeader';
 import Overview from './components/Overview';
 import LiveRadar from './components/LiveRadar';
 import AICopilot from './components/AICopilot';
@@ -15,7 +16,7 @@ export default function App() {
   const [isSimulating, setIsSimulating] = useState(true);
   const [selectedTxnForAI, setSelectedTxnForAI] = useState(null);
 
-  // Background Ingestion Stream Simulation
+  // Background Stream Simulation
   useEffect(() => {
     if (!isSimulating) return;
 
@@ -67,7 +68,7 @@ export default function App() {
     return () => clearInterval(interval);
   }, [isSimulating]);
 
-  // Handler Actions
+  // Actions
   const handleSelectTxnForAI = (txn) => {
     setSelectedTxnForAI(txn);
     setActiveTab('copilot');
@@ -90,59 +91,66 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans pb-16">
-      {/* Clean Top Navigation Bar */}
-      <Header 
+    <div className="flex min-h-screen bg-slate-950 text-slate-100 font-sans">
+      {/* Stripe / Razorpay Style Left Sidebar */}
+      <Sidebar 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         isSimulating={isSimulating}
         setIsSimulating={setIsSimulating}
       />
 
-      {/* Main Single-Focus Content Area */}
-      <main className="max-w-7xl mx-auto px-6">
-        {activeTab === 'overview' && (
-          <Overview 
-            transactions={transactions}
-            onNavigateTab={setActiveTab}
-          />
-        )}
+      {/* Main Content Workspace */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <TopHeader 
+          activeTab={activeTab}
+          onNavigateTab={setActiveTab}
+        />
 
-        {activeTab === 'radar' && (
-          <LiveRadar 
-            transactions={transactions}
-            onSelectTxnForAI={handleSelectTxnForAI}
-            onBlockTxn={handleBlockTxn}
-            onWhitelistTxn={handleWhitelistTxn}
-          />
-        )}
+        <main className="p-8 flex-1 overflow-y-auto max-w-7xl w-full mx-auto">
+          {activeTab === 'overview' && (
+            <Overview 
+              transactions={transactions}
+              onNavigateTab={setActiveTab}
+            />
+          )}
 
-        {activeTab === 'copilot' && (
-          <AICopilot 
-            selectedTxn={selectedTxnForAI}
-            transactions={transactions}
-          />
-        )}
+          {activeTab === 'radar' && (
+            <LiveRadar 
+              transactions={transactions}
+              onSelectTxnForAI={handleSelectTxnForAI}
+              onBlockTxn={handleBlockTxn}
+              onWhitelistTxn={handleWhitelistTxn}
+            />
+          )}
 
-        {activeTab === 'sandbox' && (
-          <PaymentSandbox 
-            onSimulateTxn={handleSimulateNewTxn}
-            onNavigateTab={setActiveTab}
-          />
-        )}
+          {activeTab === 'copilot' && (
+            <AICopilot 
+              selectedTxn={selectedTxnForAI}
+              transactions={transactions}
+            />
+          )}
 
-        {activeTab === 'rules' && (
-          <RuleEngine />
-        )}
+          {activeTab === 'sandbox' && (
+            <PaymentSandbox 
+              onSimulateTxn={handleSimulateNewTxn}
+              onNavigateTab={setActiveTab}
+            />
+          )}
 
-        {activeTab === 'analytics' && (
-          <GeoAnalytics />
-        )}
+          {activeTab === 'rules' && (
+            <RuleEngine />
+          )}
 
-        {activeTab === 'architecture' && (
-          <SystemArchitecture />
-        )}
-      </main>
+          {activeTab === 'analytics' && (
+            <GeoAnalytics />
+          )}
+
+          {activeTab === 'architecture' && (
+            <SystemArchitecture />
+          )}
+        </main>
+      </div>
     </div>
   );
 }
