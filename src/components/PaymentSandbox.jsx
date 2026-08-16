@@ -28,29 +28,59 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
     e.preventDefault();
 
     const numAmount = Number(amount);
-    let baseRisk = Math.floor(Math.random() * 8) + 2;
+    let baseRisk = Math.floor(Math.random() * 6) + 2;
     const triggeredRules = [];
 
-    // 1. Extreme Amount Check
+    // --- MERCHANT-SPECIFIC DYNAMIC RISK FORMULAS ---
+    if (merchant === 'Swiggy Instamart') {
+      // Quick Commerce: Max ticket size usually ₹1,500. > ₹15,000 is highly suspicious!
+      if (numAmount > 15000) {
+        baseRisk += 50;
+        triggeredRules.push('RULE-701 (Quick-Commerce Ticket Anomaly: Swiggy Instamart)');
+      }
+      if (numAmount > 100000) {
+        baseRisk += 35;
+        triggeredRules.push('RULE-204 (Extreme Quick-Commerce Amount Breached)');
+      }
+    } else if (merchant === 'Zerodha Broking Ltd') {
+      // Investment/Trading: High amounts (₹2,00,000+) are normal during trading hours!
+      if (numAmount > 1000000) { // > 10 Lakhs
+        baseRisk += 30;
+        triggeredRules.push('RULE-204 (High-Value Investment Transfer)');
+      } else if (numAmount > 100000) {
+        baseRisk += 5; // Low risk increment for Zerodha stock fund additions!
+      }
+    } else if (merchant === 'CRED Pay') {
+      // Credit Card Bill Settlement: High amounts (₹50,000 - ₹2,00,000) are standard bill payments.
+      if (method.includes('BNPL')) {
+        baseRisk += 35;
+        triggeredRules.push('RULE-503 (CRED Card Settlement via BNPL Anomaly)');
+      }
+      if (numAmount > 300000) {
+        baseRisk += 40;
+        triggeredRules.push('RULE-204 (Extreme Credit Bill Transfer)');
+      }
+    } else if (merchant === 'Flipkart Internet') {
+      // E-Commerce / Electronics: High amounts allowed for laptops/iPhones (up to ₹1.5L)
+      if (numAmount > 150000) {
+        baseRisk += 40;
+        triggeredRules.push('RULE-702 (High-Value Electronics Asset Risk)');
+      }
+    } else {
+      // Razorpay Merchant Store (Standard NPCI UPI Limit = ₹1,00,000)
+      if (numAmount > 100000) {
+        baseRisk += 45;
+        triggeredRules.push('RULE-204 (Standard NPCI UPI Daily Limit Exceeded)');
+      }
+    }
+
+    // --- GLOBAL EXTREME AMOUNT CHECK ---
     if (numAmount > 10000000) { // > 1 Crore
       baseRisk += 80;
-      triggeredRules.push('RULE-204 (Extreme High-Value Threshold Exceeded)');
-    } else if (numAmount > 1000000) { // > 10 Lakhs
-      baseRisk += 65;
-      triggeredRules.push('RULE-204 (High-Value Transfer Window Anomaly)');
-    } else if (numAmount > 100000) { // > 1 Lakh
-      baseRisk += 45;
-      triggeredRules.push('RULE-204');
+      triggeredRules.push('RULE-204 (Astronomical Amount Exceeded)');
     }
 
-    // 2. Merchant Category Anomaly Check
-    const isQuickCommerce = merchant.includes('Swiggy') || merchant.includes('Blinkit') || merchant.includes('Zomato');
-    if (isQuickCommerce && numAmount > 25000) {
-      baseRisk += 35;
-      triggeredRules.push('RULE-701 (Quick-Commerce High-Value Anomaly)');
-    }
-
-    // 3. Threat Vector Injections
+    // --- THREAT VECTOR INJECTIONS ---
     if (simulateTor) {
       baseRisk += 45;
       triggeredRules.push('RULE-101 (Proxy/Tor Exit Node Detected)');
@@ -73,12 +103,12 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
       ? `High Threat Trigger: ${triggeredRules.join(', ')}`
       : status === 'SUSPICIOUS'
       ? `Secondary Verification Required: ${triggeredRules.join(', ')}`
-      : 'Biometrics & IP Verified Safe';
+      : `Verified Safe for ${merchant}`;
 
     const newTxn = {
       id: `TXN-${Math.floor(100000 + Math.random() * 900000)}`,
       merchant,
-      merchantCategory: 'Digital Gateway Sandbox',
+      merchantCategory: merchant === 'Zerodha Broking Ltd' ? 'Investment & Trading' : merchant === 'Swiggy Instamart' ? 'Quick Commerce' : merchant === 'CRED Pay' ? 'Credit Settlement' : 'E-Commerce Retail',
       amount: numAmount,
       currency: 'INR',
       method,
@@ -118,7 +148,7 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
           </div>
           <div>
             <h2 className="text-xl font-bold text-white">Razorpay & UPI Payment Gateway Sandbox</h2>
-            <p className="text-xs text-slate-400 font-mono">Test live payment evaluation and inject simulated threat vectors in real time</p>
+            <p className="text-xs text-slate-400 font-mono">Test merchant-specific risk profiles and threat vector injections in real time</p>
           </div>
         </div>
       </div>
@@ -154,6 +184,10 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
               <span className="text-emerald-400 font-bold">11ms (Redis Velocity Cache)</span>
             </div>
             <div className="flex justify-between">
+              <span className="text-slate-400">Merchant Profile:</span>
+              <span className="text-indigo-300 font-bold">{resultTxn.merchantCategory}</span>
+            </div>
+            <div className="flex justify-between">
               <span className="text-slate-400">Customer:</span>
               <span className="text-white">{resultTxn.customerName}</span>
             </div>
@@ -162,17 +196,17 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
               <span className="text-white">{resultTxn.method}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Flag Reason:</span>
+              <span className="text-slate-400">Risk Evaluation:</span>
               <span className="text-amber-300 leading-relaxed">{resultTxn.flaggedReason}</span>
             </div>
           </div>
 
-          <div className="flex gap-4 max-w-md mx-auto pt-2">
+          <div className="flex gap-4 max-w-md mx-auto pt-2 font-sans">
             <button
               onClick={() => setResultTxn(null)}
               className="btn btn-secondary flex-1 justify-center text-xs py-2.5"
             >
-              Test Another Payment
+              Test Another Partner
             </button>
             <button
               onClick={() => onNavigateTab('radar')}
@@ -189,17 +223,17 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
           <form onSubmit={handlePayNow} className="space-y-5">
             <div className="form-grid">
               <div className="form-field">
-                <label className="form-label">Select Merchant Store</label>
+                <label className="form-label">Select Merchant Partner Store</label>
                 <select
                   value={merchant}
                   onChange={(e) => setMerchant(e.target.value)}
                   className="form-select"
                 >
-                  <option value="Razorpay Merchant Store">Razorpay Merchant Store</option>
-                  <option value="Zerodha Broking Ltd">Zerodha Broking Ltd</option>
-                  <option value="Swiggy Instamart">Swiggy Instamart</option>
-                  <option value="CRED Pay">CRED Pay</option>
-                  <option value="Flipkart Internet">Flipkart Internet</option>
+                  <option value="Razorpay Merchant Store">Razorpay Merchant Store (General Gateway)</option>
+                  <option value="Zerodha Broking Ltd">Zerodha Broking Ltd (Stock Investment)</option>
+                  <option value="Swiggy Instamart">Swiggy Instamart (Quick Grocery Commerce)</option>
+                  <option value="CRED Pay">CRED Pay (Credit Card Settlements)</option>
+                  <option value="Flipkart Internet">Flipkart Internet (E-Commerce Electronics)</option>
                 </select>
               </div>
 
@@ -284,7 +318,7 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
 
             <button
               type="submit"
-              className="btn btn-primary w-full justify-center text-xs py-3"
+              className="btn btn-primary w-full justify-center text-xs py-3 font-sans"
             >
               <Zap className="w-4 h-4 text-amber-300" />
               <span>Simulate Live Payment & Evaluate Risk</span>
