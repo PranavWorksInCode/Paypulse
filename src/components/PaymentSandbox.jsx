@@ -217,7 +217,7 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
           </div>
         </div>
       ) : (
-        /* Form View - Ultra Spacious */
+        /* Form View */
         <div className="card space-y-6">
           <form onSubmit={handlePayNow} className="space-y-6">
             <div className="form-grid">
@@ -275,60 +275,45 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
               </div>
             </div>
 
-            {/* Threat Vector Injection Grid Cards */}
+            {/* Threat Vector Injection Section with Explicit Side-by-Side Checkboxes */}
             <div className="p-6 rounded-2xl bg-slate-950 border border-amber-500/20 space-y-4">
               <div className="text-amber-400 font-bold text-xs uppercase tracking-wider font-mono flex items-center gap-2">
                 <Sliders className="w-4 h-4" />
                 <span>Inject Simulated Threat Vectors</span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <label className={`flex items-center gap-3 p-4 rounded-xl border transition-all cursor-pointer ${
-                  simulateTor 
-                    ? 'bg-indigo-600/15 border-indigo-500/50 text-white' 
-                    : 'bg-slate-900/60 border-white/5 text-slate-300 hover:border-white/20'
-                }`}>
+              <div className="threat-grid">
+                <label className={`threat-card ${simulateTor ? 'active' : ''}`}>
                   <input
                     type="checkbox"
                     checked={simulateTor}
                     onChange={(e) => setSimulateTor(e.target.checked)}
-                    className="accent-indigo-500 w-4 h-4 shrink-0"
                   />
-                  <div className="flex items-center gap-2 font-mono text-xs">
+                  <div className="threat-card-content">
                     <Globe className="w-4 h-4 text-cyan-400 shrink-0" />
                     <span>Proxy / Tor Exit IP</span>
                   </div>
                 </label>
 
-                <label className={`flex items-center gap-3 p-4 rounded-xl border transition-all cursor-pointer ${
-                  simulateVelocity 
-                    ? 'bg-indigo-600/15 border-indigo-500/50 text-white' 
-                    : 'bg-slate-900/60 border-white/5 text-slate-300 hover:border-white/20'
-                }`}>
+                <label className={`threat-card ${simulateVelocity ? 'active' : ''}`}>
                   <input
                     type="checkbox"
                     checked={simulateVelocity}
                     onChange={(e) => setSimulateVelocity(e.target.checked)}
-                    className="accent-indigo-500 w-4 h-4 shrink-0"
                   />
-                  <div className="flex items-center gap-2 font-mono text-xs">
+                  <div className="threat-card-content">
                     <Activity className="w-4 h-4 text-amber-400 shrink-0" />
                     <span>High Velocity Retries</span>
                   </div>
                 </label>
 
-                <label className={`flex items-center gap-3 p-4 rounded-xl border transition-all cursor-pointer ${
-                  simulateJailbreak 
-                    ? 'bg-indigo-600/15 border-indigo-500/50 text-white' 
-                    : 'bg-slate-900/60 border-white/5 text-slate-300 hover:border-white/20'
-                }`}>
+                <label className={`threat-card ${simulateJailbreak ? 'active' : ''}`}>
                   <input
                     type="checkbox"
                     checked={simulateJailbreak}
                     onChange={(e) => setSimulateJailbreak(e.target.checked)}
-                    className="accent-indigo-500 w-4 h-4 shrink-0"
                   />
-                  <div className="flex items-center gap-2 font-mono text-xs">
+                  <div className="threat-card-content">
                     <Smartphone className="w-4 h-4 text-purple-400 shrink-0" />
                     <span>Jailbroken Device</span>
                   </div>
