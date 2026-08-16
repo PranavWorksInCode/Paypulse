@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { 
   CreditCard, 
-  Smartphone, 
   ShieldAlert, 
   Zap, 
   Sliders, 
@@ -87,13 +86,13 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 animate-fade-in font-sans">
+    <div className="space-y-6 font-sans animate-fade-in w-full">
       
       {/* Header */}
-      <div className="glass-panel p-6">
+      <div className="card space-y-1">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400">
-            <CreditCard className="w-6 h-6" />
+          <div className="p-2.5 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400">
+            <CreditCard className="w-5 h-5" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-white">Razorpay & UPI Payment Gateway Sandbox</h2>
@@ -103,8 +102,8 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
       </div>
 
       {resultTxn ? (
-        /* Evaluation Result View */
-        <div className="glass-panel p-8 text-center space-y-6 animate-fade-in">
+        /* Result Screen */
+        <div className="card text-center space-y-6 animate-fade-in p-8">
           {resultTxn.status === 'SAFE' ? (
             <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mx-auto flex items-center justify-center shadow-lg shadow-emerald-500/20">
               <CheckCircle2 className="w-8 h-8" />
@@ -116,7 +115,7 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
           )}
 
           <div>
-            <span className={`text-xs font-bold font-mono px-3.5 py-1.5 rounded-full border ${
+            <span className={`badge ${
               resultTxn.status === 'SAFE' ? 'badge-safe' : resultTxn.status === 'SUSPICIOUS' ? 'badge-warning' : 'badge-danger'
             }`}>
               {resultTxn.status} ({resultTxn.riskScore}% Threat Index)
@@ -149,13 +148,13 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
           <div className="flex gap-4 max-w-md mx-auto pt-2">
             <button
               onClick={() => setResultTxn(null)}
-              className="btn-secondary flex-1 justify-center text-xs py-2.5"
+              className="btn btn-secondary flex-1 justify-center text-xs py-2.5"
             >
               Test Another Payment
             </button>
             <button
               onClick={() => onNavigateTab('radar')}
-              className="btn-primary flex-1 justify-center text-xs py-2.5"
+              className="btn btn-primary flex-1 justify-center text-xs py-2.5"
             >
               <span>View in Stream Radar</span>
               <ArrowRight className="w-4 h-4" />
@@ -164,15 +163,15 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
         </div>
       ) : (
         /* Form View */
-        <div className="glass-panel p-6">
-          <form onSubmit={handlePayNow} className="space-y-5 text-xs">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-slate-300 mb-1.5 font-semibold">Select Merchant Store</label>
+        <div className="card">
+          <form onSubmit={handlePayNow} className="space-y-5">
+            <div className="form-grid">
+              <div className="form-field">
+                <label className="form-label">Select Merchant Store</label>
                 <select
                   value={merchant}
                   onChange={(e) => setMerchant(e.target.value)}
-                  className="w-full bg-slate-950 border border-white/10 rounded-lg p-2.5 text-white focus:outline-none focus:border-indigo-500 font-mono"
+                  className="form-select"
                 >
                   <option value="Razorpay Merchant Store">Razorpay Merchant Store</option>
                   <option value="Zerodha Broking Ltd">Zerodha Broking Ltd</option>
@@ -182,24 +181,24 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-slate-300 mb-1.5 font-semibold">Amount (INR ₹)</label>
+              <div className="form-field">
+                <label className="form-label">Amount (INR ₹)</label>
                 <input
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="w-full bg-slate-950 border border-white/10 rounded-lg p-2.5 text-white font-mono focus:outline-none focus:border-indigo-500"
+                  className="form-input"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-slate-300 mb-1.5 font-semibold">Payment Method</label>
+            <div className="form-grid">
+              <div className="form-field">
+                <label className="form-label">Payment Method</label>
                 <select
                   value={method}
                   onChange={(e) => setMethod(e.target.value)}
-                  className="w-full bg-slate-950 border border-white/10 rounded-lg p-2.5 text-white focus:outline-none focus:border-indigo-500 font-mono"
+                  className="form-select"
                 >
                   <option value="UPI (GPay)">UPI (GPay)</option>
                   <option value="UPI (PhonePe)">UPI (PhonePe)</option>
@@ -210,58 +209,60 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-slate-300 mb-1.5 font-semibold">Customer Name</label>
+              <div className="form-field">
+                <label className="form-label">Customer Name</label>
                 <input
                   type="text"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full bg-slate-950 border border-white/10 rounded-lg p-2.5 text-white focus:outline-none focus:border-indigo-500"
+                  className="form-input"
                 />
               </div>
             </div>
 
-            {/* Threat Injection Toggles */}
-            <div className="p-4 rounded-xl bg-slate-950 border border-amber-500/20 space-y-3">
-              <div className="text-amber-400 font-bold text-[11px] uppercase tracking-wider font-mono flex items-center gap-1.5">
-                <Sliders className="w-3.5 h-3.5" />
+            {/* Threat Vector Injection Checks */}
+            <div className="p-4 rounded-xl bg-slate-950 border border-amber-500/20 space-y-3 font-sans">
+              <div className="text-amber-400 font-bold text-xs uppercase tracking-wider font-mono flex items-center gap-2">
+                <Sliders className="w-4 h-4" />
                 <span>Inject Simulated Threat Vectors</span>
               </div>
 
-              <label className="flex items-center justify-between text-slate-300 cursor-pointer p-2 hover:bg-white/5 rounded-lg">
-                <span>🌐 Simulate Proxy / Tor Exit Node IP</span>
-                <input
-                  type="checkbox"
-                  checked={simulateTor}
-                  onChange={(e) => setSimulateTor(e.target.checked)}
-                  className="accent-indigo-500 w-4 h-4"
-                />
-              </label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <label className="flex items-center gap-2 text-slate-300 text-xs cursor-pointer p-2.5 hover:bg-white/5 rounded-lg border border-white/5">
+                  <input
+                    type="checkbox"
+                    checked={simulateTor}
+                    onChange={(e) => setSimulateTor(e.target.checked)}
+                    className="accent-indigo-500 w-4 h-4"
+                  />
+                  <span>Proxy / Tor Exit IP</span>
+                </label>
 
-              <label className="flex items-center justify-between text-slate-300 cursor-pointer p-2 hover:bg-white/5 rounded-lg">
-                <span>⚡ Simulate High Velocity Retry Spike</span>
-                <input
-                  type="checkbox"
-                  checked={simulateVelocity}
-                  onChange={(e) => setSimulateVelocity(e.target.checked)}
-                  className="accent-indigo-500 w-4 h-4"
-                />
-              </label>
+                <label className="flex items-center gap-2 text-slate-300 text-xs cursor-pointer p-2.5 hover:bg-white/5 rounded-lg border border-white/5">
+                  <input
+                    type="checkbox"
+                    checked={simulateVelocity}
+                    onChange={(e) => setSimulateVelocity(e.target.checked)}
+                    className="accent-indigo-500 w-4 h-4"
+                  />
+                  <span>High Velocity Retries</span>
+                </label>
 
-              <label className="flex items-center justify-between text-slate-300 cursor-pointer p-2 hover:bg-white/5 rounded-lg">
-                <span>📱 Simulate Jailbroken / Rooted Device</span>
-                <input
-                  type="checkbox"
-                  checked={simulateJailbreak}
-                  onChange={(e) => setSimulateJailbreak(e.target.checked)}
-                  className="accent-indigo-500 w-4 h-4"
-                />
-              </label>
+                <label className="flex items-center gap-2 text-slate-300 text-xs cursor-pointer p-2.5 hover:bg-white/5 rounded-lg border border-white/5">
+                  <input
+                    type="checkbox"
+                    checked={simulateJailbreak}
+                    onChange={(e) => setSimulateJailbreak(e.target.checked)}
+                    className="accent-indigo-500 w-4 h-4"
+                  />
+                  <span>Jailbroken Device</span>
+                </label>
+              </div>
             </div>
 
             <button
               type="submit"
-              className="w-full btn-primary justify-center text-xs py-3"
+              className="btn btn-primary w-full justify-center text-xs py-3"
             >
               <Zap className="w-4 h-4 text-amber-300" />
               <span>Simulate Live Payment & Evaluate Risk</span>

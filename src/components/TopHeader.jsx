@@ -16,35 +16,38 @@ export default function TopHeader({ activeTab, onNavigateTab }) {
   };
 
   return (
-    <header className="top-header font-sans">
-      {/* Breadcrumbs */}
+    <header className="top-header">
+      {/* Left: Breadcrumbs */}
       <div className="breadcrumbs font-mono">
         <span>Dashboard</span>
         <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
         <span className="font-semibold text-indigo-400">{getTabLabel()}</span>
       </div>
 
-      {/* Search Input */}
-      <div className="search-box hidden md:block">
-        <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-500" />
-        <input
-          type="text"
-          placeholder="Search TXN ID, merchant, UPI... (⌘K)"
-          className="search-input font-mono"
-        />
-      </div>
+      {/* Right Controls Group: Search + Test Mode + Profile */}
+      <div className="top-header-right">
+        {/* Center Search Input */}
+        <div className="search-box hidden md:flex">
+          <Search className="search-icon" />
+          <input
+            type="text"
+            placeholder="Search TXN ID, merchant, UPI... (⌘K)"
+            className="search-input font-mono"
+          />
+          <span className="search-shortcut">⌘K</span>
+        </div>
 
-      {/* Sandbox Button & Profile */}
-      <div className="flex items-center gap-3">
+        {/* Test Mode Button */}
         <button 
           onClick={() => onNavigateTab('sandbox')}
-          className="btn bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-mono font-semibold"
+          className="btn-test-mode"
         >
-          <Zap className="w-3.5 h-3.5" />
+          <Zap className="w-3.5 h-3.5 text-amber-400" />
           <span>TEST MODE</span>
         </button>
 
-        <div className="w-8 h-8 rounded-full bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 font-bold text-xs flex items-center justify-center font-mono">
+        {/* User Profile Avatar */}
+        <div className="user-avatar">
           PK
         </div>
       </div>
