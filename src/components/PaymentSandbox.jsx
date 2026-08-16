@@ -27,23 +27,41 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
   const handlePayNow = (e) => {
     e.preventDefault();
 
-    let baseRisk = Math.floor(Math.random() * 10) + 2;
+    const numAmount = Number(amount);
+    let baseRisk = Math.floor(Math.random() * 8) + 2;
     const triggeredRules = [];
 
-    if (amount > 100000) {
-      baseRisk += 35;
+    // 1. Extreme Amount Check
+    if (numAmount > 10000000) { // > 1 Crore
+      baseRisk += 80;
+      triggeredRules.push('RULE-204 (Extreme High-Value Threshold Exceeded)');
+    } else if (numAmount > 1000000) { // > 10 Lakhs
+      baseRisk += 65;
+      triggeredRules.push('RULE-204 (High-Value Transfer Window Anomaly)');
+    } else if (numAmount > 100000) { // > 1 Lakh
+      baseRisk += 45;
       triggeredRules.push('RULE-204');
     }
+
+    // 2. Merchant Category Anomaly Check
+    const isQuickCommerce = merchant.includes('Swiggy') || merchant.includes('Blinkit') || merchant.includes('Zomato');
+    if (isQuickCommerce && numAmount > 25000) {
+      baseRisk += 35;
+      triggeredRules.push('RULE-701 (Quick-Commerce High-Value Anomaly)');
+    }
+
+    // 3. Threat Vector Injections
     if (simulateTor) {
       baseRisk += 45;
-      triggeredRules.push('RULE-101');
+      triggeredRules.push('RULE-101 (Proxy/Tor Exit Node Detected)');
     }
     if (simulateVelocity) {
       baseRisk += 30;
-      triggeredRules.push('RULE-412');
+      triggeredRules.push('RULE-412 (High Velocity Retry Spike)');
     }
     if (simulateJailbreak) {
       baseRisk += 25;
+      triggeredRules.push('SECURITY (Rooted/Jailbroken Hardware)');
     }
 
     const finalScore = Math.min(Math.max(baseRisk, 1), 99);
@@ -51,11 +69,17 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
     if (finalScore >= 75) status = 'HIGH_RISK';
     else if (finalScore >= 45) status = 'SUSPICIOUS';
 
+    const flagReason = status === 'HIGH_RISK'
+      ? `High Threat Trigger: ${triggeredRules.join(', ')}`
+      : status === 'SUSPICIOUS'
+      ? `Secondary Verification Required: ${triggeredRules.join(', ')}`
+      : 'Biometrics & IP Verified Safe';
+
     const newTxn = {
       id: `TXN-${Math.floor(100000 + Math.random() * 900000)}`,
       merchant,
       merchantCategory: 'Digital Gateway Sandbox',
-      amount: Number(amount),
+      amount: numAmount,
       currency: 'INR',
       method,
       upiHandle: method.includes('UPI') ? `${customerName.toLowerCase().replace(' ', '')}@okaxis` : 'N/A',
@@ -65,9 +89,7 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
       ipAddress: simulateTor ? '185.220.101.5 (Tor Exit Node)' : '106.51.72.44',
       device: simulateJailbreak ? 'iPhone 15 Pro (Jailbroken)' : 'Android 14 Chrome',
       timestamp: 'Just now',
-      flaggedReason: status !== 'SAFE' 
-        ? `${simulateTor ? 'Tor Proxy IP + ' : ''}${amount > 100000 ? 'High-Value Night Transfer + ' : ''}${simulateVelocity ? 'Velocity Spike' : 'Risk threshold breach'}` 
-        : 'Biometrics & IP Verified Safe',
+      flaggedReason: flagReason,
       triggeredRules,
       customerName,
       velocityAlert: simulateVelocity ? '6 rapid attempts in 30s' : 'Normal'
@@ -105,11 +127,11 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
         /* Result Screen */
         <div className="card text-center space-y-6 animate-fade-in p-8">
           {resultTxn.status === 'SAFE' ? (
-            <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mx-auto flex items-center justify-center shadow-lg shadow-emerald-500/20">
+            <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mx-auto flex items-center justify-center shadow-lg shadow-emerald-500/20 font-mono">
               <CheckCircle2 className="w-8 h-8" />
             </div>
           ) : (
-            <div className="w-16 h-16 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 mx-auto flex items-center justify-center shadow-lg shadow-rose-500/20">
+            <div className="w-16 h-16 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 mx-auto flex items-center justify-center shadow-lg shadow-rose-500/20 font-mono">
               <AlertOctagon className="w-8 h-8" />
             </div>
           )}
@@ -141,7 +163,7 @@ export default function PaymentSandbox({ onSimulateTxn, onNavigateTab }) {
             </div>
             <div className="flex justify-between">
               <span className="text-slate-400">Flag Reason:</span>
-              <span className="text-amber-300">{resultTxn.flaggedReason}</span>
+              <span className="text-amber-300 leading-relaxed">{resultTxn.flaggedReason}</span>
             </div>
           </div>
 
