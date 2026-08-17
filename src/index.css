@@ -272,7 +272,7 @@ body {
   position: relative;
   display: flex;
   align-items: center;
-  width: 300px;
+  width: 280px;
 }
 
 .search-icon {
@@ -336,23 +336,6 @@ body {
   transform: translateY(-1px);
 }
 
-.user-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--primary-gradient);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  font-weight: 800;
-  font-size: 12.5px;
-  font-family: 'JetBrains Mono', monospace;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 0 14px rgba(99, 102, 241, 0.4);
-}
-
 /* Workspace Main Container */
 .workspace-container {
   padding: 40px;
@@ -360,6 +343,43 @@ body {
   width: 100%;
   margin: 0 auto;
   flex: 1;
+}
+
+/* Live Stream Radar Split Layout */
+.radar-layout {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 24px !important;
+  width: 100% !important;
+  align-items: flex-start !important;
+}
+
+.radar-table-container {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  margin-bottom: 0 !important;
+}
+
+.radar-full-width {
+  width: 100% !important;
+  flex: 1 1 100% !important;
+}
+
+.radar-split-left {
+  width: 60% !important;
+  flex: 0 0 60% !important;
+  max-width: 60% !important;
+}
+
+.radar-inspection-panel {
+  width: 38% !important;
+  flex: 0 0 38% !important;
+  max-width: 38% !important;
+  position: sticky !important;
+  top: 88px !important;
+  margin-bottom: 0 !important;
+  border: 1px solid rgba(99, 102, 241, 0.35) !important;
+  background: rgba(11, 16, 28, 0.95) !important;
+  space-y: 24px;
 }
 
 /* AI Copilot High-Contrast Gemini/ChatGPT Layout System */

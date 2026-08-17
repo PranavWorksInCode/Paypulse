@@ -62,13 +62,13 @@ export default function LiveRadar({
   };
 
   return (
-    <div className="space-y-6 font-sans w-full animate-fade-in">
+    <div className="w-full font-sans animate-fade-in">
       
-      {/* Master Layout Container */}
-      <div className="flex flex-col lg:flex-row gap-6 w-full items-start">
+      {/* Explicit Flex Row Layout Container */}
+      <div className="radar-layout">
         
-        {/* Left Side: Live Transaction Stream Radar Table */}
-        <div className={`card space-y-6 transition-all duration-300 ${activeTxn ? 'w-full lg:w-[60%]' : 'w-full'}`}>
+        {/* Left Side: Stream Radar Table */}
+        <div className={`radar-table-container card ${activeTxn ? 'radar-split-left' : 'radar-full-width'}`}>
           
           {/* Header Controls */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
@@ -90,7 +90,7 @@ export default function LiveRadar({
                 <Search className="search-icon" />
                 <input
                   type="text"
-                  placeholder="Search TXN, Merchant..."
+                  placeholder="Search TXN..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="search-input text-xs"
@@ -193,15 +193,15 @@ export default function LiveRadar({
           </div>
         </div>
 
-        {/* Right Side: Deep Threat Inspection Side Panel */}
+        {/* Right Side: Deep Threat Inspection Panel (Pinned Side-by-Side) */}
         {activeTxn && (
-          <div className="w-full lg:w-[40%] card border border-indigo-500/30 bg-slate-950/95 space-y-6 sticky top-24 shadow-2xl animate-fade-in shrink-0">
+          <div className="radar-inspection-panel card shadow-2xl animate-fade-in">
             
             {/* Header */}
             <div className="flex items-center justify-between pb-4 border-b border-white/10">
               <div className="flex items-center gap-2.5">
-                <div className="p-2.5 rounded-xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30">
-                  <Terminal className="w-5 h-5" />
+                <div className="p-2 rounded-xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30">
+                  <Terminal className="w-4.5 h-4.5" />
                 </div>
                 <div>
                   <h3 className="font-bold text-white text-base font-mono">Deep Threat Inspection</h3>
@@ -217,7 +217,7 @@ export default function LiveRadar({
             </div>
 
             {/* Transaction Header Card */}
-            <div className="p-5 rounded-2xl bg-slate-900 border border-white/10 flex items-center justify-between shadow-lg">
+            <div className="p-4 rounded-2xl bg-slate-900/90 border border-white/10 flex items-center justify-between shadow-lg">
               <div>
                 <div className="text-xs text-slate-400 font-mono mb-1">TXN ID: {activeTxn.id}</div>
                 <div className="text-2xl font-extrabold text-white font-mono">
@@ -260,7 +260,7 @@ export default function LiveRadar({
             {/* Device Telemetry */}
             <div className="space-y-3">
               <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono">Device Telemetry & Proxy Signals</h4>
-              <div className="p-4 rounded-xl bg-slate-900 border border-white/5 text-xs space-y-3 font-mono">
+              <div className="p-4 rounded-xl bg-slate-900/90 border border-white/5 text-xs space-y-3 font-mono">
                 <div className="flex justify-between items-center border-b border-white/5 pb-2">
                   <span className="text-slate-400 flex items-center gap-1.5">
                     <Globe className="w-4 h-4 text-cyan-400" /> IP Address:
