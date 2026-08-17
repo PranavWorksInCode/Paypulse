@@ -158,7 +158,7 @@ export default function AICopilot({ selectedTxn, transactions }) {
           </div>
           <div>
             <div className="flex items-center gap-2.5">
-              <h2 className="text-lg font-bold text-white">PayPulse AI Financial Copilot</h2>
+              <h2 className="text-xl font-bold text-white tracking-tight">PayPulse AI Financial Copilot</h2>
               <span className="badge badge-safe text-[10px]">
                 LLM RAG v2.4 • Active
               </span>
@@ -179,9 +179,9 @@ export default function AICopilot({ selectedTxn, transactions }) {
       {/* Main Chat Scroll Container */}
       <div className="flex-1 overflow-y-auto space-y-6 pr-2 no-scrollbar">
         
-        {/* Gemini / ChatGPT Style Suggestion Cards */}
+        {/* Gemini / ChatGPT Style Suggestion Cards (Crisp High-Contrast Text) */}
         {messages.length <= 1 && (
-          <div className="space-y-4 my-4">
+          <div className="space-y-5 my-6">
             <div className="text-center space-y-1">
               <h3 className="text-2xl font-extrabold text-white tracking-tight">
                 How can I assist with risk compliance today?
@@ -201,13 +201,13 @@ export default function AICopilot({ selectedTxn, transactions }) {
                     className="copilot-suggestion-card group"
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 font-mono text-xs font-bold text-white group-hover:text-indigo-300">
-                        <IconComponent className={`w-4 h-4 ${card.color}`} />
+                      <div className="copilot-card-title">
+                        <IconComponent className={`w-4.5 h-4.5 ${card.color} shrink-0`} />
                         <span>{card.title}</span>
                       </div>
-                      <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all" />
                     </div>
-                    <p className="text-xs text-slate-400 font-sans line-clamp-2 leading-relaxed">
+                    <p className="copilot-card-desc">
                       "{card.desc}"
                     </p>
                   </button>
@@ -272,7 +272,7 @@ export default function AICopilot({ selectedTxn, transactions }) {
       </div>
 
       {/* Floating Bottom Input Bar */}
-      <div className="pt-4 mt-2 shrink-0">
+      <div className="pt-6 mt-4 shrink-0">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -295,7 +295,7 @@ export default function AICopilot({ selectedTxn, transactions }) {
             <Send className="w-4 h-4" />
           </button>
         </form>
-        <p className="text-[10px] text-slate-500 text-center mt-2 font-mono">
+        <p className="text-[10.5px] text-slate-400 text-center mt-2.5 font-mono">
           PayPulse Copilot uses RAG vector indexing over live Kafka payment telemetry. Verify critical audit reports under RBI guidelines.
         </p>
       </div>
