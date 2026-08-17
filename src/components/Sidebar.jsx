@@ -35,15 +35,15 @@ export default function Sidebar({
 
   return (
     <>
-      {/* Mobile Drawer Overlay Backdrop */}
+      {/* Mobile Backdrop */}
       {isMobileOpen && (
         <div 
-          className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 lg:hidden"
+          className="mobile-backdrop"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
 
-      {/* Main Sidebar Element */}
+      {/* Main Sidebar */}
       <aside className={`sidebar ${isMobileOpen ? 'mobile-open' : ''}`}>
         <div>
           {/* Brand Header */}
@@ -60,10 +60,10 @@ export default function Sidebar({
               </div>
             </div>
 
-            {/* Mobile Close Button */}
+            {/* Close button shown ONLY on mobile */}
             <button
               onClick={() => setIsMobileOpen(false)}
-              className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white"
+              className="sidebar-close-btn"
             >
               <X className="w-5 h-5" />
             </button>

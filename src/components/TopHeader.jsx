@@ -18,9 +18,10 @@ export default function TopHeader({ activeTab, onNavigateTab, setIsMobileOpen })
     <header className="top-header">
       {/* Left: Mobile Menu Toggle + Breadcrumbs */}
       <div className="flex items-center gap-3">
+        {/* Hamburger Menu shown ONLY on mobile */}
         <button
           onClick={() => setIsMobileOpen(true)}
-          className="lg:hidden p-2 rounded-xl bg-slate-900 border border-white/10 text-slate-300 hover:text-white"
+          className="mobile-menu-btn"
         >
           <Menu className="w-5 h-5" />
         </button>
