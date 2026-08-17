@@ -5,11 +5,9 @@ import {
   Bot, 
   Sliders, 
   Map, 
-  Cpu, 
   CreditCard, 
   Zap,
-  CheckCircle2,
-  ChevronDown
+  CheckCircle2
 } from 'lucide-react';
 
 export default function Sidebar({ 
@@ -57,13 +55,6 @@ export default function Sidebar({
       label: 'Geo & Merchants',
       icon: Map,
       tag: null
-    },
-    {
-      id: 'architecture',
-      label: 'System Design',
-      icon: Cpu,
-      tag: 'SDE',
-      tagClass: 'nav-tag-sde'
     }
   ];
 

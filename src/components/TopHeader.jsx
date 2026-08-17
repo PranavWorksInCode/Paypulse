@@ -10,7 +10,6 @@ export default function TopHeader({ activeTab, onNavigateTab }) {
       case 'sandbox': return 'UPI & Razorpay Payment Sandbox';
       case 'rules': return 'Sliding-Window Risk Rule Engine';
       case 'analytics': return 'Regional Heatmaps & Merchant Risks';
-      case 'architecture': return 'System Architecture & Resume Guide';
       default: return 'Dashboard';
     }
   };

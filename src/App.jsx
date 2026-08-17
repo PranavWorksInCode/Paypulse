@@ -7,7 +7,6 @@ import AICopilot from './components/AICopilot';
 import RuleEngine from './components/RuleEngine';
 import GeoAnalytics from './components/GeoAnalytics';
 import PaymentSandbox from './components/PaymentSandbox';
-import SystemArchitecture from './components/SystemArchitecture';
 import { INITIAL_TRANSACTIONS } from './data/mockData';
 
 export default function App() {
@@ -144,10 +143,6 @@ export default function App() {
 
           {activeTab === 'analytics' && (
             <GeoAnalytics />
-          )}
-
-          {activeTab === 'architecture' && (
-            <SystemArchitecture />
           )}
         </main>
       </div>
