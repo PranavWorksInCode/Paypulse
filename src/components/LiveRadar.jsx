@@ -22,7 +22,7 @@ export default function LiveRadar({
 }) {
   const [filter, setFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTxn, setSelectedTxn] = useState(null);
+  const [activeTxn, setActiveTxn] = useState(null);
 
   const filteredTransactions = transactions.filter(t => {
     const matchesFilter = filter === 'ALL' || t.status === filter;
@@ -62,41 +62,41 @@ export default function LiveRadar({
   };
 
   return (
-    <div className="card space-y-5 relative font-sans">
+    <div className="card space-y-6 relative font-sans w-full">
       
       {/* Header Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
         <div>
-          <h2 className="text-base font-bold text-white flex items-center gap-2">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <span>Live Transaction Stream Radar</span>
-            <span className="text-xs font-mono font-medium px-2.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <span className="text-xs font-mono font-medium px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
               WebSocket Ingestion Active
             </span>
           </h2>
-          <p className="text-xs text-slate-400">Streamed via Kafka topic with sub-15ms ML risk classification</p>
+          <p className="text-xs text-slate-400 font-mono mt-0.5">Streamed via Kafka topic with sub-15ms ML risk classification</p>
         </div>
 
         {/* Filters & Search */}
         <div className="flex flex-wrap items-center gap-3">
           <div className="search-box">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-500" />
+            <Search className="search-icon" />
             <input
               type="text"
               placeholder="Search TXN, Merchant, UPI..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input font-mono"
+              className="search-input"
             />
           </div>
 
-          <div className="flex items-center bg-slate-950 p-1 rounded-lg border border-white/10">
+          <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-white/10 font-mono text-xs">
             {['ALL', 'HIGH_RISK', 'SUSPICIOUS', 'SAFE'].map((type) => (
               <button
                 key={type}
                 onClick={() => setFilter(type)}
-                className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${
+                className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
                   filter === type
-                    ? 'bg-indigo-600 text-white shadow-sm'
+                    ? 'bg-indigo-600 text-white shadow-md'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -132,22 +132,22 @@ export default function LiveRadar({
                 <tr 
                   key={txn.id}
                   className="cursor-pointer group"
-                  onClick={() => setSelectedTxn(txn)}
+                  onClick={() => setActiveTxn(txn)}
                 >
                   <td>
                     <div className="font-bold text-indigo-300 group-hover:text-indigo-200">
                       {txn.id}
                     </div>
-                    <span className="text-[10px] text-slate-400">{txn.timestamp} • {txn.city}</span>
+                    <span className="text-[10.5px] text-slate-400">{txn.timestamp} • {txn.city}</span>
                   </td>
 
                   <td>
-                    <div className="font-semibold text-slate-200 font-sans">{txn.merchant}</div>
-                    <span className="text-[10px] text-slate-400 font-sans">{txn.merchantCategory}</span>
+                    <div className="font-bold text-slate-200 font-sans text-sm">{txn.merchant}</div>
+                    <span className="text-[10.5px] text-slate-400 font-sans">{txn.merchantCategory}</span>
                   </td>
 
                   <td>
-                    <div className="text-slate-200 font-sans">{txn.customerName}</div>
+                    <div className="text-slate-200 font-sans font-medium">{txn.customerName}</div>
                     <span className="text-[11px] text-slate-400">{txn.method} {txn.upiHandle !== 'N/A' && `(${txn.upiHandle})`}</span>
                   </td>
 
@@ -161,14 +161,15 @@ export default function LiveRadar({
 
                   <td className="text-right">
                     <button
+                      type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setSelectedTxn(txn);
+                        setActiveTxn(txn);
                       }}
-                      className="btn btn-secondary text-xs font-sans py-1 px-2.5"
+                      className="btn btn-secondary text-xs font-sans py-1.5 px-3"
                     >
                       <span>Inspect</span>
-                      <ExternalLink className="w-3 h-3" />
+                      <ExternalLink className="w-3.5 h-3.5 text-indigo-400" />
                     </button>
                   </td>
                 </tr>
@@ -178,115 +179,134 @@ export default function LiveRadar({
         </table>
       </div>
 
-      {/* Side Drawer Inspection */}
-      {selectedTxn && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-end animate-fade-in">
-          <div className="w-full max-w-lg bg-slate-950 border-l border-white/10 p-6 overflow-y-auto h-full flex flex-col justify-between">
+      {/* Slide-Out Deep Threat Inspection Drawer */}
+      {activeTxn && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex justify-end animate-fade-in"
+          onClick={() => setActiveTxn(null)}
+        >
+          <div 
+            className="w-full max-w-lg bg-slate-950 border-l border-white/15 p-6 overflow-y-auto h-full flex flex-col justify-between shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div>
-              <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
-                <div className="flex items-center gap-2">
-                  <Terminal className="w-5 h-5 text-indigo-400" />
-                  <h3 className="font-bold text-white text-base font-mono">Deep Threat Inspection</h3>
+              <div className="flex items-center justify-between pb-4 mb-5 border-b border-white/10">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-lg bg-indigo-600/20 text-indigo-400 border border-indigo-500/30">
+                    <Terminal className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-white text-base font-mono">Deep Threat Inspection</h3>
+                    <p className="text-[11px] text-slate-400 font-mono">Telemetry & Risk Signal Breakdown</p>
+                  </div>
                 </div>
                 <button 
-                  onClick={() => setSelectedTxn(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10"
+                  onClick={() => setActiveTxn(null)}
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-all"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="p-4 rounded-xl mb-5 bg-slate-900 border border-white/10 flex items-center justify-between">
+              {/* Transaction Header Card */}
+              <div className="p-5 rounded-2xl mb-6 bg-slate-900 border border-white/10 flex items-center justify-between shadow-lg">
                 <div>
-                  <div className="text-xs text-slate-400 font-mono mb-1">TXN: {selectedTxn.id}</div>
-                  <div className="text-2xl font-extrabold text-white font-mono">
-                    ₹ {selectedTxn.amount.toLocaleString('en-IN')}
+                  <div className="text-xs text-slate-400 font-mono mb-1">TXN ID: {activeTxn.id}</div>
+                  <div className="text-3xl font-extrabold text-white font-mono">
+                    ₹ {activeTxn.amount.toLocaleString('en-IN')}
                   </div>
-                  <div className="text-xs text-slate-300 mt-1">{selectedTxn.merchant}</div>
+                  <div className="text-xs text-slate-300 mt-1 font-sans font-medium">{activeTxn.merchant}</div>
                 </div>
                 <div>
-                  {getStatusBadge(selectedTxn.status, selectedTxn.riskScore)}
+                  {getStatusBadge(activeTxn.status, activeTxn.riskScore)}
                 </div>
               </div>
 
-              <div className="mb-6">
-                <div className="flex justify-between text-xs mb-1 font-mono">
-                  <span className="text-slate-400">Threat Index</span>
-                  <span className="text-indigo-400 font-bold">{selectedTxn.riskScore}%</span>
+              {/* Risk Threat Progress Bar */}
+              <div className="mb-6 space-y-2">
+                <div className="flex justify-between text-xs font-mono">
+                  <span className="text-slate-400">Threat Index Rating</span>
+                  <span className="text-indigo-400 font-bold text-sm">{activeTxn.riskScore}%</span>
                 </div>
-                <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
+                <div className="w-full h-3 bg-slate-900 rounded-full overflow-hidden p-0.5 border border-white/5">
                   <div 
                     className={`h-full rounded-full transition-all duration-500 ${
-                      selectedTxn.riskScore > 80 ? 'bg-rose-500' : selectedTxn.riskScore > 50 ? 'bg-amber-500' : 'bg-emerald-500'
+                      activeTxn.riskScore > 80 ? 'bg-rose-500 shadow-lg shadow-rose-500/50' : activeTxn.riskScore > 50 ? 'bg-amber-500 shadow-lg shadow-amber-500/50' : 'bg-emerald-500 shadow-lg shadow-emerald-500/50'
                     }`} 
-                    style={{ width: `${selectedTxn.riskScore}%` }}
+                    style={{ width: `${activeTxn.riskScore}%` }}
                   />
                 </div>
               </div>
 
-              <div className="mb-6">
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 font-mono flex items-center gap-1.5">
+              {/* Flagged Risk Trigger */}
+              <div className="mb-6 space-y-2">
+                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono flex items-center gap-1.5">
                   <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
                   <span>Flagged Risk Trigger</span>
                 </h4>
-                <p className="text-xs text-slate-200 bg-amber-500/10 border border-amber-500/20 p-3.5 rounded-lg leading-relaxed">
-                  {selectedTxn.flaggedReason}
-                </p>
+                <div className="text-xs text-slate-200 bg-amber-500/10 border border-amber-500/25 p-4 rounded-xl leading-relaxed font-sans">
+                  {activeTxn.flaggedReason}
+                </div>
               </div>
 
+              {/* Device Telemetry */}
               <div className="space-y-3 mb-6">
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono">Device Telemetry</h4>
-                <div className="p-3.5 rounded-lg bg-slate-900 border border-white/5 text-xs space-y-2.5 font-mono">
-                  <div className="flex justify-between">
-                    <span className="text-slate-400 flex items-center gap-1">
-                      <Globe className="w-3.5 h-3.5 text-cyan-400" /> IP Address:
+                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono">Device Telemetry & Proxy Signals</h4>
+                <div className="p-4 rounded-xl bg-slate-900 border border-white/5 text-xs space-y-3 font-mono">
+                  <div className="flex justify-between items-center border-b border-white/5 pb-2">
+                    <span className="text-slate-400 flex items-center gap-1.5">
+                      <Globe className="w-4 h-4 text-cyan-400" /> IP Address:
                     </span>
-                    <span className="text-slate-200 font-bold">{selectedTxn.ipAddress}</span>
+                    <span className="text-slate-100 font-bold">{activeTxn.ipAddress}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400 flex items-center gap-1">
-                      <Smartphone className="w-3.5 h-3.5 text-purple-400" /> Device Fingerprint:
+                  <div className="flex justify-between items-center border-b border-white/5 pb-2">
+                    <span className="text-slate-400 flex items-center gap-1.5">
+                      <Smartphone className="w-4 h-4 text-purple-400" /> Device Environment:
                     </span>
-                    <span className="text-slate-200">{selectedTxn.device}</span>
+                    <span className="text-slate-200 font-medium">{activeTxn.device}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">City / Region:</span>
-                    <span className="text-slate-200">{selectedTxn.city}, India</span>
+                  <div className="flex justify-between items-center pt-1">
+                    <span className="text-slate-400">City / Origin Hub:</span>
+                    <span className="text-slate-200 font-medium">{activeTxn.city}, India</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-2.5 pt-4 border-t border-white/10 font-sans">
+            {/* Action Buttons */}
+            <div className="space-y-3 pt-4 border-t border-white/10 font-sans">
               <button
+                type="button"
                 onClick={() => {
-                  onSelectTxnForAI(selectedTxn);
-                  setSelectedTxn(null);
+                  onSelectTxnForAI(activeTxn);
+                  setActiveTxn(null);
                 }}
-                className="w-full btn btn-primary justify-center text-xs py-2.5"
+                className="w-full btn btn-primary justify-center text-xs py-3"
               >
                 <Bot className="w-4 h-4 text-cyan-300" />
                 <span>Investigate with AI Financial Copilot</span>
               </button>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <button
+                  type="button"
                   onClick={() => {
-                    onBlockTxn(selectedTxn.id);
-                    setSelectedTxn(null);
+                    onBlockTxn(activeTxn.id);
+                    setActiveTxn(null);
                   }}
-                  className="btn bg-rose-500/15 text-rose-300 border border-rose-500/30 hover:bg-rose-500/25 justify-center text-xs"
+                  className="btn bg-rose-500/15 text-rose-300 border border-rose-500/30 hover:bg-rose-500/25 justify-center text-xs py-2.5 font-mono"
                 >
                   <Ban className="w-3.5 h-3.5" />
                   <span>Block Account</span>
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => {
-                    onWhitelistTxn(selectedTxn.id);
-                    setSelectedTxn(null);
+                    onWhitelistTxn(activeTxn.id);
+                    setActiveTxn(null);
                   }}
-                  className="btn bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25 justify-center text-xs"
+                  className="btn bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25 justify-center text-xs py-2.5 font-mono"
                 >
                   <UserCheck className="w-3.5 h-3.5" />
                   <span>Mark Safe</span>
