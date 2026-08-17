@@ -14,6 +14,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('overview');
   const [isSimulating, setIsSimulating] = useState(true);
   const [selectedTxnForAI, setSelectedTxnForAI] = useState(null);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // Background Stream Simulation
   useEffect(() => {
@@ -97,6 +98,8 @@ export default function App() {
         setActiveTab={setActiveTab}
         isSimulating={isSimulating}
         setIsSimulating={setIsSimulating}
+        isMobileOpen={isMobileOpen}
+        setIsMobileOpen={setIsMobileOpen}
       />
 
       {/* Main Workspace Area */}
@@ -104,6 +107,7 @@ export default function App() {
         <TopHeader 
           activeTab={activeTab}
           onNavigateTab={setActiveTab}
+          setIsMobileOpen={setIsMobileOpen}
         />
 
         <main className="workspace-container">
