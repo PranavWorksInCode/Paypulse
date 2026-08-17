@@ -8,7 +8,8 @@ import {
   FileText,
   AlertTriangle, 
   TrendingUp, 
-  ArrowRight
+  ArrowRight,
+  User
 } from 'lucide-react';
 
 export default function AICopilot({ selectedTxn, transactions }) {
@@ -179,7 +180,7 @@ export default function AICopilot({ selectedTxn, transactions }) {
       {/* Main Chat Scroll Container */}
       <div className="flex-1 overflow-y-auto space-y-6 pr-2 no-scrollbar">
         
-        {/* Gemini / ChatGPT Style Suggestion Cards (Crisp High-Contrast Text) */}
+        {/* Gemini / ChatGPT Style Suggestion Cards */}
         {messages.length <= 1 && (
           <div className="space-y-5 my-6">
             <div className="text-center space-y-1">
@@ -248,8 +249,8 @@ export default function AICopilot({ selectedTxn, transactions }) {
             </div>
 
             {msg.sender === 'user' && (
-              <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 mt-1 font-bold text-xs font-mono shadow-md">
-                PK
+              <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 mt-1 shadow-md">
+                <User className="w-5 h-5" />
               </div>
             )}
           </div>

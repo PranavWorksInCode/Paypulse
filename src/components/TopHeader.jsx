@@ -23,7 +23,7 @@ export default function TopHeader({ activeTab, onNavigateTab }) {
         <span className="font-semibold text-indigo-400">{getTabLabel()}</span>
       </div>
 
-      {/* Right Controls Group: Search + Test Mode + Profile */}
+      {/* Right Controls Group: Search + Test Mode + API Status */}
       <div className="top-header-right">
         {/* Center Search Input */}
         <div className="search-box hidden md:flex">
@@ -45,9 +45,10 @@ export default function TopHeader({ activeTab, onNavigateTab }) {
           <span>TEST MODE</span>
         </button>
 
-        {/* User Profile Avatar */}
-        <div className="user-avatar">
-          PK
+        {/* Clean System Connection Pill */}
+        <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-mono">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+          <span>API v2.4 • CONNECTED</span>
         </div>
       </div>
     </header>
