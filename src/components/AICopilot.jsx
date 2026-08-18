@@ -213,126 +213,127 @@ export default function AICopilot({ selectedTxn, transactions }) {
       {/* Main Chat Scroll Container */}
       <div className="flex-1 overflow-y-auto space-y-6 pr-2 no-scrollbar">
         
-        {/* Gemini / ChatGPT Style Suggestion Cards */}
-        {messages.length <= 1 && (
-          <div className="space-y-5 my-6">
-            <div className="text-center space-y-1">
-              <h3 className="text-2xl font-extrabold text-white tracking-tight">
-                How can I assist with risk compliance today?
-              </h3>
-              <p className="text-xs text-slate-400 font-mono">
-                Click any hint below or type your query in the input bar
-              </p>
-            </div>
-
-            <div className="copilot-suggestions-grid">
-              {suggestionCards.map((card) => {
-                const IconComponent = card.icon;
-                return (
-                  <button
-                    key={card.id}
-                    onClick={() => handleSendPrompt(card.prompt)}
-                    className="copilot-suggestion-card group"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="copilot-card-title">
-                        <IconComponent className={`w-4.5 h-4.5 ${card.color} shrink-0`} />
-                        <span>{card.title}</span>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                    </div>
-                    <p className="copilot-card-desc">
-                      "{card.desc}"
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
+        {/* Gemini / ChatGPT Style Suggestion Cards (ALWAYS VISIBLE AT TOP) */}
+        <div className="space-y-4 my-3 pb-2 border-b border-white/10">
+          <div className="text-left space-y-0.5">
+            <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2 font-mono">
+              <Sparkles className="w-4 h-4 text-indigo-400" />
+              <span>Suggested Audit Prompts</span>
+            </h3>
+            <p className="text-[11.5px] text-slate-400 font-mono">
+              Click any hint below to run an instant analysis at any point
+            </p>
           </div>
-        )}
+
+          <div className="copilot-suggestions-grid">
+            {suggestionCards.map((card) => {
+              const IconComponent = card.icon;
+              return (
+                <button
+                  key={card.id}
+                  onClick={() => handleSendPrompt(card.prompt)}
+                  className="copilot-suggestion-card group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="copilot-card-title">
+                      <IconComponent className={`w-4.5 h-4.5 ${card.color} shrink-0`} />
+                      <span>{card.title}</span>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                  </div>
+                  <p className="copilot-card-desc">
+                    "{card.desc}"
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Message Stream */}
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex gap-3.5 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            {msg.sender === 'ai' && (
-              <div className="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center shrink-0 mt-1 shadow-md">
-                <Bot className="w-5 h-5" />
-              </div>
-            )}
-
+        <div className="space-y-6 pt-2">
+          {messages.map((msg) => (
             <div
-              className={`max-w-2xl text-xs leading-relaxed ${
-                msg.sender === 'user'
-                  ? 'copilot-chat-bubble-user font-medium font-sans'
-                  : 'copilot-chat-bubble-ai font-sans'
-              }`}
+              key={msg.id}
+              className={`flex gap-4 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              <div className="space-y-2 whitespace-pre-wrap">
-                {msg.text.split('\n\n').map((paragraph, idx) => (
-                  <p key={idx}>{paragraph}</p>
-                ))}
-              </div>
-
-              {/* Interactive Guided Prompt Chips for Unhandled Queries */}
-              {msg.isUnhandled && (
-                <div className="mt-4 space-y-2 pt-3 border-t border-white/10 font-mono">
-                  <div className="text-[11px] text-slate-400 font-bold flex items-center gap-1.5">
-                    <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
-                    <span>Click a guided prompt below to run:</span>
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    {suggestionCards.map((card) => (
-                      <button
-                        key={card.id}
-                        onClick={() => handleSendPrompt(card.prompt)}
-                        className="text-left p-2.5 rounded-xl bg-slate-900/90 border border-white/10 hover:border-indigo-500/50 hover:bg-slate-800/90 transition-all group flex items-center justify-between"
-                      >
-                        <div className="text-slate-200 text-[11.5px] font-sans flex items-center gap-2">
-                          <span className="text-indigo-400 font-bold">▶</span>
-                          <span>"{card.prompt}"</span>
-                        </div>
-                        <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
-                      </button>
-                    ))}
-                  </div>
+              {msg.sender === 'ai' && (
+                <div className="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center shrink-0 mt-1 shadow-md">
+                  <Bot className="w-5 h-5" />
                 </div>
               )}
 
-              <div className={`text-[10px] mt-3 font-mono ${msg.sender === 'user' ? 'text-indigo-200 text-right' : 'text-slate-500'}`}>
-                {msg.timestamp}
+              <div
+                className={`max-w-2xl leading-relaxed ${
+                  msg.sender === 'user'
+                    ? 'copilot-chat-bubble-user font-medium font-sans'
+                    : 'copilot-chat-bubble-ai font-sans'
+                }`}
+              >
+                <div className="space-y-2.5 whitespace-pre-wrap">
+                  {msg.text.split('\n\n').map((paragraph, idx) => (
+                    <p key={idx}>{paragraph}</p>
+                  ))}
+                </div>
+
+                {/* Interactive Guided Prompt Chips for Unhandled Queries */}
+                {msg.isUnhandled && (
+                  <div className="mt-4 space-y-2 pt-3 border-t border-white/10 font-mono">
+                    <div className="text-[11px] text-slate-400 font-bold flex items-center gap-1.5">
+                      <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>Click a guided prompt below to run:</span>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      {suggestionCards.map((card) => (
+                        <button
+                          key={card.id}
+                          onClick={() => handleSendPrompt(card.prompt)}
+                          className="text-left p-2.5 rounded-xl bg-slate-900/90 border border-white/10 hover:border-indigo-500/50 hover:bg-slate-800/90 transition-all group flex items-center justify-between"
+                        >
+                          <div className="text-slate-200 text-[11.5px] font-sans flex items-center gap-2">
+                            <span className="text-indigo-400 font-bold">▶</span>
+                            <span>"{card.prompt}"</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className={`text-[10.5px] mt-3 font-mono ${msg.sender === 'user' ? 'text-indigo-200 text-right' : 'text-slate-500'}`}>
+                  {msg.timestamp}
+                </div>
+              </div>
+
+              {msg.sender === 'user' && (
+                <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 mt-1 shadow-md">
+                  <User className="w-5 h-5" />
+                </div>
+              )}
+            </div>
+          ))}
+
+          {/* Typing Indicator */}
+          {isTyping && (
+            <div className="flex gap-4 justify-start items-center">
+              <div className="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center shrink-0 shadow-md">
+                <Bot className="w-5 h-5 animate-spin" />
+              </div>
+              <div className="p-4 rounded-2xl bg-slate-900 border border-white/10 text-xs text-slate-400 font-mono flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
+                <span>AI Copilot is analyzing Kafka stream & Redis velocity logs...</span>
               </div>
             </div>
+          )}
 
-            {msg.sender === 'user' && (
-              <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 mt-1 shadow-md">
-                <User className="w-5 h-5" />
-              </div>
-            )}
-          </div>
-        ))}
-
-        {/* Typing Indicator */}
-        {isTyping && (
-          <div className="flex gap-3.5 justify-start items-center">
-            <div className="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center shrink-0 shadow-md">
-              <Bot className="w-5 h-5 animate-spin" />
-            </div>
-            <div className="p-4 rounded-2xl bg-slate-900 border border-white/10 text-xs text-slate-400 font-mono flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
-              <span>AI Copilot is analyzing Kafka stream & Redis velocity logs...</span>
-            </div>
-          </div>
-        )}
-
-        <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
       {/* Floating Bottom Input Bar */}
-      <div className="pt-6 mt-4 shrink-0">
+      <div className="pt-4 mt-4 border-t border-white/10 shrink-0">
         <form
           onSubmit={(e) => {
             e.preventDefault();
