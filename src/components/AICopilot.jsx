@@ -9,7 +9,8 @@ import {
   AlertTriangle, 
   TrendingUp, 
   ArrowRight,
-  User
+  User,
+  HelpCircle
 } from 'lucide-react';
 
 export default function AICopilot({ selectedTxn, transactions }) {
@@ -57,22 +58,33 @@ export default function AICopilot({ selectedTxn, transactions }) {
 
     setTimeout(() => {
       let aiReply = '';
-      const targetTxn = txnCtx || (transactions && transactions[0]);
+      let isUnhandled = false;
+      const textLower = textToSend.toLowerCase();
+      const targetTxn = txnCtx;
 
-      if (textToSend.toLowerCase().includes('zerodha')) {
-        aiReply = `🛡️ MERCHANT COMPLIANCE AUDIT REPORT: Zerodha Broking Ltd\n\n` +
+      // Merchant Audit Queries
+      if (textLower.includes('zerodha') || textLower.includes('swiggy') || textLower.includes('cred') || textLower.includes('flipkart') || textLower.includes('merchant audit')) {
+        const merchantName = textLower.includes('zerodha') ? 'Zerodha Broking Ltd' : textLower.includes('swiggy') ? 'Swiggy Instamart' : textLower.includes('cred') ? 'CRED Pay' : 'Flipkart Internet';
+        aiReply = `🛡️ MERCHANT COMPLIANCE AUDIT REPORT: ${merchantName}\n\n` +
           `• Processed 24h Volume: ₹4.82 Crores across 14,200 transactions.\n` +
           `• Fraud Interception Rate: 99.84% (Sub-15ms Redis ZSET evaluation).\n` +
           `• Key Risk Findings: 3 nocturnal high-value transfers (> ₹1,00,000 between 1:00 AM - 4:00 AM IST) were flagged and required 2FA biometric confirmation.\n` +
           `• Recommendation: Merchant status is SAFE. No compliance freeze required under RBI Master Directions.`;
-      } else if (textToSend.toLowerCase().includes('bengaluru') || textToSend.toLowerCase().includes('upi')) {
-        aiReply = `📍 REGIONAL UPI THREAT ANALYSIS: Bengaluru Tech Hub\n\n` +
+      } 
+      // Regional & Geolocation Risk Audits
+      else if (textLower.includes('bengaluru') || textLower.includes('mumbai') || textLower.includes('delhi') || textLower.includes('regional') || textLower.includes('upi anomaly') || textLower.includes('anomalies')) {
+        aiReply = `📍 REGIONAL UPI THREAT ANALYSIS: Bengaluru & Major Indian Tech Hubs\n\n` +
           `• Flagged Anomalies: 12 high-velocity UPI retry spikes detected in Koramangala & Indiranagar.\n` +
           `• Primary Vector: Automated bot retry attacks targeting quick-commerce merchants.\n` +
           `• Active Enforcements: Applied RULE-101 (Proxy/TOR Exit IP) and RULE-412 (CVV Retry Limit).\n` +
           `• Risk Mitigation: 98.2% of malicious attempts intercepted before bank settlement.`;
-      } else if (textToSend.toLowerCase().includes('txn') || textToSend.toLowerCase().includes('flagged') || targetTxn) {
-        aiReply = `🚨 DEEP THREAT INVESTIGATION ANALYSIS: ${targetTxn ? targetTxn.id : 'TXN-984210'}\n\n` +
+      } 
+      // Specific Transaction Deep Dives (Explicit TXN ID or selectedTxn context)
+      else if (textLower.includes('txn-') || (textLower.includes('why') && textLower.includes('flagged')) || targetTxn) {
+        const txnIdMatch = textToSend.match(/TXN-\d+/i);
+        const txnId = txnIdMatch ? txnIdMatch[0].toUpperCase() : (targetTxn ? targetTxn.id : 'TXN-984210');
+        
+        aiReply = `🚨 DEEP THREAT INVESTIGATION ANALYSIS: ${txnId}\n\n` +
           `• Merchant: ${targetTxn ? targetTxn.merchant : 'Swiggy Instamart'}\n` +
           `• Amount: ₹ ${targetTxn ? targetTxn.amount.toLocaleString('en-IN') : '65,911'}\n` +
           `• Threat Index: ${targetTxn ? targetTxn.riskScore : '84'}% (${targetTxn ? targetTxn.status : 'HIGH RISK'})\n` +
@@ -81,25 +93,35 @@ export default function AICopilot({ selectedTxn, transactions }) {
           `  2. Device Hardware: Matched a jailbroken iOS environment with root privileges.\n` +
           `  3. Velocity Alert: 4 rapid retry attempts in < 30 seconds.\n\n` +
           `💡 Action Recommended: Keep account BLOCKED. Require mandatory in-person KYC re-verification before account unlock.`;
-      } else {
-        aiReply = `✨ PAYPULSE CO-PILOT ANALYSIS COMPLETE\n\n` +
-          `I have audited the active transaction stream matching your query.\n\n` +
-          `• Stream Health: 15,400 TPS live ingestion active via Kafka Topic paypulse-events.\n` +
+      } 
+      // System & Pipeline SLA Queries
+      else if (textLower.includes('kafka') || textLower.includes('tps') || textLower.includes('redis') || textLower.includes('rule') || textLower.includes('latency') || textLower.includes('sla')) {
+        aiReply = `✨ PAYPULSE SYSTEM PERFORMANCE & RULE SLA AUDIT\n\n` +
+          `• Stream Throughput: 15,400 TPS live ingestion active via Kafka Topic paypulse-events.\n` +
           `• Inference SLA: Average ML risk scoring latency is 11ms.\n` +
           `• Rule Engine Status: 12 active sliding-window rules enforcing RBI compliance.\n\n` +
           `Type any transaction ID, merchant name, or region to run a targeted deep audit!`;
+      } 
+      // PRE-LOADED GUIDED FALLBACK RESPONSE (For Unhandled / Out-of-Scope Requests)
+      else {
+        isUnhandled = true;
+        aiReply = `⚠️ UNHANDLED QUERY NOTICE\n\n` +
+          `I am specialized specifically as a FinTech Payment Fraud & Compliance Copilot under Reserve Bank of India (RBI) guidelines.\n\n` +
+          `I cannot assist with general topics outside payment security, merchant risk audits, and rule engine telemetry.\n\n` +
+          `💡 Here are supported prompt topics you can ask me right now:`;
       }
 
       const aiMsg = {
         id: Date.now() + 1,
         sender: 'ai',
         text: aiReply,
-        timestamp: 'Just now'
+        timestamp: 'Just now',
+        isUnhandled
       };
 
       setMessages(prev => [...prev, aiMsg]);
       setIsTyping(false);
-    }, 1200);
+    }, 1000);
   };
 
   const handleClearChat = () => {
@@ -242,6 +264,32 @@ export default function AICopilot({ selectedTxn, transactions }) {
                   <p key={idx}>{paragraph}</p>
                 ))}
               </div>
+
+              {/* Interactive Guided Prompt Chips for Unhandled Queries */}
+              {msg.isUnhandled && (
+                <div className="mt-4 space-y-2 pt-3 border-t border-white/10 font-mono">
+                  <div className="text-[11px] text-slate-400 font-bold flex items-center gap-1.5">
+                    <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>Click a guided prompt below to run:</span>
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    {suggestionCards.map((card) => (
+                      <button
+                        key={card.id}
+                        onClick={() => handleSendPrompt(card.prompt)}
+                        className="text-left p-2.5 rounded-xl bg-slate-900/90 border border-white/10 hover:border-indigo-500/50 hover:bg-slate-800/90 transition-all group flex items-center justify-between"
+                      >
+                        <div className="text-slate-200 text-[11.5px] font-sans flex items-center gap-2">
+                          <span className="text-indigo-400 font-bold">▶</span>
+                          <span>"{card.prompt}"</span>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className={`text-[10px] mt-3 font-mono ${msg.sender === 'user' ? 'text-indigo-200 text-right' : 'text-slate-500'}`}>
                 {msg.timestamp}
