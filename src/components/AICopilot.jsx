@@ -211,10 +211,10 @@ export default function AICopilot({ selectedTxn, transactions }) {
       </div>
 
       {/* Main Chat Scroll Container */}
-      <div className="flex-1 overflow-y-auto space-y-6 pr-2 no-scrollbar">
+      <div className="flex-1 overflow-y-auto space-y-6 pr-2 pb-8 no-scrollbar">
         
         {/* Gemini / ChatGPT Style Suggestion Cards (ALWAYS VISIBLE AT TOP) */}
-        <div className="space-y-4 my-3 pb-2 border-b border-white/10">
+        <div className="space-y-4 my-3 pb-4 border-b border-white/10">
           <div className="text-left space-y-0.5">
             <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2 font-mono">
               <Sparkles className="w-4 h-4 text-indigo-400" />
@@ -332,8 +332,8 @@ export default function AICopilot({ selectedTxn, transactions }) {
         </div>
       </div>
 
-      {/* Floating Bottom Input Bar */}
-      <div className="pt-4 mt-4 border-t border-white/10 shrink-0">
+      {/* Floating Bottom Input Bar with Generous 36px Separation */}
+      <div className="copilot-input-bar-container">
         <form
           onSubmit={(e) => {
             e.preventDefault();
