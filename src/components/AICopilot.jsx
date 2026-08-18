@@ -59,11 +59,28 @@ export default function AICopilot({ selectedTxn, transactions }) {
     setTimeout(() => {
       let aiReply = '';
       let isUnhandled = false;
-      const textLower = textToSend.toLowerCase();
+      const textLower = textToSend.toLowerCase().trim();
       const targetTxn = txnCtx;
 
-      // Merchant Audit Queries
-      if (textLower.includes('zerodha') || textLower.includes('swiggy') || textLower.includes('cred') || textLower.includes('flipkart') || textLower.includes('merchant audit')) {
+      // --- Everyday Basic Conversation Intent Handling ---
+      if (textLower === 'hi' || textLower === 'hello' || textLower === 'hey' || textLower.startsWith('good morning') || textLower.startsWith('good evening') || textLower.startsWith('good afternoon')) {
+        aiReply = `👋 Hello! I am doing great. How can I assist you with payment fraud monitoring, transaction audits, or compliance rules today?`;
+      } 
+      else if (textLower.includes('how are you') || textLower.includes('how do you do') || textLower === "what's up" || textLower === 'whats up') {
+        aiReply = `⚡ I'm fully operational and performing at 15,400 TPS throughput with a 11ms average machine learning risk inference SLA!\n\nHow can I help you audit your transactions or merchant risk profiles today?`;
+      } 
+      else if (textLower.includes('who are you') || textLower.includes('what is your name') || textLower.includes('what can you do') || textLower.includes('do you do anything else')) {
+        aiReply = `🤖 I am PayPulse AI Financial Copilot!\n\nI am designed to monitor high-frequency UPI & card transaction feeds, evaluate risk velocity anomalies in under 15ms, and generate automated financial compliance audit reports under Reserve Bank of India (RBI) guidelines.\n\nYou can ask me about regional threat heatmaps, merchant risk profiles, specific transaction IDs, or live rule engine configs!`;
+      } 
+      else if (textLower.includes('thank you') || textLower.includes('thanks') || textLower === 'awesome' || textLower === 'cool' || textLower === 'great') {
+        aiReply = `😊 You're very welcome! Let me know if you need any more transaction deep-dives or merchant risk compliance checks.`;
+      } 
+      else if (textLower === 'bye' || textLower.startsWith('goodbye') || textLower.startsWith('good night') || textLower.startsWith('see you')) {
+        aiReply = `👋 Goodbye! Have a great day, and stay secure!`;
+      }
+
+      // --- Domain Specific FinTech & Compliance Queries ---
+      else if (textLower.includes('zerodha') || textLower.includes('swiggy') || textLower.includes('cred') || textLower.includes('flipkart') || textLower.includes('merchant audit')) {
         const merchantName = textLower.includes('zerodha') ? 'Zerodha Broking Ltd' : textLower.includes('swiggy') ? 'Swiggy Instamart' : textLower.includes('cred') ? 'CRED Pay' : 'Flipkart Internet';
         aiReply = `🛡️ MERCHANT COMPLIANCE AUDIT REPORT: ${merchantName}\n\n` +
           `• Processed 24h Volume: ₹4.82 Crores across 14,200 transactions.\n` +
@@ -71,7 +88,6 @@ export default function AICopilot({ selectedTxn, transactions }) {
           `• Key Risk Findings: 3 nocturnal high-value transfers (> ₹1,00,000 between 1:00 AM - 4:00 AM IST) were flagged and required 2FA biometric confirmation.\n` +
           `• Recommendation: Merchant status is SAFE. No compliance freeze required under RBI Master Directions.`;
       } 
-      // Regional & Geolocation Risk Audits
       else if (textLower.includes('bengaluru') || textLower.includes('mumbai') || textLower.includes('delhi') || textLower.includes('regional') || textLower.includes('upi anomaly') || textLower.includes('anomalies')) {
         aiReply = `📍 REGIONAL UPI THREAT ANALYSIS: Bengaluru & Major Indian Tech Hubs\n\n` +
           `• Flagged Anomalies: 12 high-velocity UPI retry spikes detected in Koramangala & Indiranagar.\n` +
@@ -79,7 +95,6 @@ export default function AICopilot({ selectedTxn, transactions }) {
           `• Active Enforcements: Applied RULE-101 (Proxy/TOR Exit IP) and RULE-412 (CVV Retry Limit).\n` +
           `• Risk Mitigation: 98.2% of malicious attempts intercepted before bank settlement.`;
       } 
-      // Specific Transaction Deep Dives (Explicit TXN ID or selectedTxn context)
       else if (textLower.includes('txn-') || (textLower.includes('why') && textLower.includes('flagged')) || targetTxn) {
         const txnIdMatch = textToSend.match(/TXN-\d+/i);
         const txnId = txnIdMatch ? txnIdMatch[0].toUpperCase() : (targetTxn ? targetTxn.id : 'TXN-984210');
@@ -94,7 +109,6 @@ export default function AICopilot({ selectedTxn, transactions }) {
           `  3. Velocity Alert: 4 rapid retry attempts in < 30 seconds.\n\n` +
           `💡 Action Recommended: Keep account BLOCKED. Require mandatory in-person KYC re-verification before account unlock.`;
       } 
-      // System & Pipeline SLA Queries
       else if (textLower.includes('kafka') || textLower.includes('tps') || textLower.includes('redis') || textLower.includes('rule') || textLower.includes('latency') || textLower.includes('sla')) {
         aiReply = `✨ PAYPULSE SYSTEM PERFORMANCE & RULE SLA AUDIT\n\n` +
           `• Stream Throughput: 15,400 TPS live ingestion active via Kafka Topic paypulse-events.\n` +
@@ -102,13 +116,10 @@ export default function AICopilot({ selectedTxn, transactions }) {
           `• Rule Engine Status: 12 active sliding-window rules enforcing RBI compliance.\n\n` +
           `Type any transaction ID, merchant name, or region to run a targeted deep audit!`;
       } 
-      // PRE-LOADED GUIDED FALLBACK RESPONSE (For Unhandled / Out-of-Scope Requests)
+      // --- Fallback for Complex Unhandled Requests ---
       else {
         isUnhandled = true;
-        aiReply = `⚠️ UNHANDLED QUERY NOTICE\n\n` +
-          `I am specialized specifically as a FinTech Payment Fraud & Compliance Copilot under Reserve Bank of India (RBI) guidelines.\n\n` +
-          `I cannot assist with general topics outside payment security, merchant risk audits, and rule engine telemetry.\n\n` +
-          `💡 Here are supported prompt topics you can ask me right now:`;
+        aiReply = `I can hold simple everyday conversations, but for complex tasks I specialize in payment fraud monitoring and RBI compliance audits.\n\n💡 Here are some guided prompts you can try right now:`;
       }
 
       const aiMsg = {
